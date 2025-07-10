@@ -69,15 +69,14 @@ def exportar_boleta_notas(dni,id_periodo):
     columnas = ("Nombre", "Curso", "Periodo", "Profesor", "Nota")
     exportar_html(lista_,"Boleta de Notas ",columnas)
       
+
 def aperturar_curso(nombre,seccion,dni_profesor,id_periodo):
     conx = conexion.conexion_()
-    conx.cursor.execute("SELECT COALESCE(MAX(idcurso), 0) + 1 FROM curso")
-    id_curso_nuevo = conx.cursor.fetchone()[0]
     query = """
-    INSERT INTO curso (idcurso, nombre_curso, seccion, profesor_DNI, periodo_idperiodo)
-    VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO curso (nombre_curso, seccion, profesor_DNI, periodo_idperiodo)
+    VALUES (%s, %s, %s, %s);
     """
-    valores = (id_curso_nuevo, nombre, seccion, dni_profesor, id_periodo)
+    valores = ( nombre, seccion, dni_profesor, id_periodo)
     conx.cursor.execute(query, valores)
     conx.database.commit()
 
@@ -121,7 +120,53 @@ def asginar_materia(dni_profesor,id_curso):
     columnas = ("Nombre del curso", "seccion", "periodo")
     exportar_html(lista_cursos,f"Lista de cursos del profesor {nombre}",columnas)
 
+def opciones_crud_user(opcion,id_user,nombre_user,password_,id_rol):
+    conx = conexion.conexion_()
+    if opcion == 1:
+        query="""
+        INSERT INTO usuario (nombre_user, password_, rol_idrol)
+        VALUES ( %s, %s, %s);
 
+        """
+        valores = (nombre_user, password_, id_rol)
+        conx.cursor.execute(query,valores)
+        conx.database.commit()
+        conx.cerrar_conexion()
+
+    elif opcion == 2:
+        conx.cursor.execute("select u.id_user, u.nombre_user,r.name_rol from usuario u  INNER JOIN rol r ON  r.idrol = u.rol_idrol;")
+        lista = conx.cursor.fetchall()
+        conx.cerrar_conexion()
+        columnas = ("id de usuario", "nombre de usuario", "rol")
+        exportar_html(lista,"LISTA DE USUARIOS",columnas)
+    elif opcion == 3:
+        conx.cursor.execute(f"UPDATE usuario SET password_='{password_}' where id_user={id_user}")
+        conx.database.commit()
+        conx.cerrar_conexion()
+
+
+def registrar_notas(valor,dni_alumno,idc_curso):
+    conx = conexion.conexion_()
+    conx.cursor.execute(f"SELECT * FROM curso_has_alumno WHERE curso_idcurso ={idc_curso} and alumno_DNI ={dni_alumno}")
+    datos = conx.cursor.fetchall()
+    if len(datos) != 0:
+        query=""" INSERT INTO calificacion ( valor, alumno_DNI, curso_idcurso)
+            VALUES (%s, %s, %s);"""
+
+        valores = (valor, dni_alumno, idc_curso)
+        conx.cursor.execute(query,valores)
+        conx.database.commit()
+    else:
+        print("el alumno no lleva el curso")
+    conx.cerrar_conexion()
+
+
+
+def actualizar_notas(id_calificacion,valor):
+    conx = conexion.conexion_()
+    conx.cursor.execute(f"UPDATE calificacion SET valor={valor} where idcalificacion={id_calificacion}")
+    conx.database.commit()
+    conx.cerrar_conexion()
 
 
 def exportar_html(lista_, titulo, columnas):

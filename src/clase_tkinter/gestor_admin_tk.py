@@ -1,5 +1,4 @@
 import tkinter as tk
-import tkinter as ttk 
 from tkinter import Toplevel
 import sys
 import os
@@ -38,16 +37,19 @@ class ventana(tk.Tk):
 
     def abrir_apertura(self):
         self.aperturar_curso("Aperturar Curso")
+        
     def abrir_asignacion(self):
        self.asignar_profesor_curso("Asignar Curso a un profesor")
 
     def abrir_gestion_usuario(self):
-        pass
+        self.gestion_usuarios("Gestion de usuarios")
+
+
 
     def consultar_notas(self, titulo):
         win = Toplevel(self)
         win.title(titulo)
-        win.geometry("600x600")
+        win.geometry("400x400")
         win.configure(bg="#fce4ec")
 
         tk.Label(win, text=titulo, font=("Verdana", 14, "bold"), bg="#fce4ec", fg="#880e4f").pack(pady=10)
@@ -68,13 +70,10 @@ class ventana(tk.Tk):
         periodo_entry = tk.Entry(frame_inputs)
         periodo_entry.grid(row=2, column=1, padx=5)
 
-
-        
-
-
-        
         tk.Button(win, text="Buscar", command=lambda: op.gestion_busqueda(dni_entry.get(), curso_entry.get(), periodo_entry.get()), bg="#64b5f6", fg="white").pack(pady=5)
         tk.Button(win, text="Exportar Boleta", command=lambda: op.exportar_boleta_notas(dni_entry.get(), periodo_entry.get()), bg="#4caf50", fg="white").pack(pady=5)
+
+
 
     def aperturar_curso(self,titulo):
         win = Toplevel(self)
@@ -86,7 +85,6 @@ class ventana(tk.Tk):
 
         frame = tk.Frame(win, bg="#e3f2fd")
         frame.pack(pady=10)
-
         # Entradas
         tk.Label(frame, text="Nombre del Curso:", bg="#e3f2fd").grid(row=0, column=0, sticky="e", pady=5)
         nombre_entry = tk.Entry(frame)
@@ -108,6 +106,8 @@ class ventana(tk.Tk):
         tk.Button(win, text="Aperturar", command=lambda: op.aperturar_curso(nombre_entry.get(),seccion_entry.get(),dni_prof_entry.get(),periodo_entry.get()), 
                 bg="#4caf50", fg="white", font=("Arial", 11)).pack(pady=20)
 
+   
+   
     def asignar_profesor_curso(self,titulo):
 
         win = Toplevel(self)
@@ -129,7 +129,48 @@ class ventana(tk.Tk):
         curso_entry.grid(row=1, column=1, padx=10, pady=5)
 
         tk.Button(win, text="Asignar", command=lambda: op.asginar_materia(dni_entry.get(),curso_entry.get()), 
-                bg="#4caf50", fg="white", font=("Arial", 11)).pack(pady=20)
+                bg="#010201", fg="white", font=("Arial", 11)).pack(pady=20)
 
-obj_gest = ventana()
-obj_gest.mainloop()
+
+    def gestion_usuarios(self,titulo):
+        win = Toplevel(self)
+        win.title(titulo)
+        win.geometry("600x500")
+        win.configure(bg="#e3f2fd")
+
+        tk.Label(win, text="Gestión de Usuarios", font=("Helvetica", 16, "bold"), bg="#e3f2fd", fg="#0d47a1").pack(pady=10)
+
+        frame = tk.Frame(win, bg="#e3f2fd")
+        frame.pack(pady=5)
+
+        # Entradas
+        tk.Label(frame, text="ID Usuario:", bg="#e3f2fd").grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        id_entry = tk.Entry(frame)
+        id_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        tk.Label(frame, text="Nombre Usuario:", bg="#e3f2fd").grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        nombre_entry = tk.Entry(frame)
+        nombre_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        tk.Label(frame, text="Password:", bg="#e3f2fd").grid(row=2, column=0, padx=5, pady=5, sticky="e")
+        pass_entry = tk.Entry(frame, show="*")
+        pass_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        tk.Label(frame, text="ID Rol:", bg="#e3f2fd").grid(row=3, column=0, padx=5, pady=5, sticky="e")
+        rol_entry = tk.Entry(frame)
+        rol_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        # Botones
+        botones_frame = tk.Frame(win, bg="#e3f2fd")
+        botones_frame.pack(pady=10)
+
+        tk.Button(botones_frame, text="Crear Usuario", command=lambda: op.opciones_crud_user(1,id_entry.get(),nombre_entry.get(),pass_entry.get(),rol_entry.get()), 
+                bg="#4caf50", fg="white", font=("Arial", 10), width=15).grid(row=0, column=2, padx=10)
+
+        tk.Button(botones_frame, text="Editar Password", command=lambda:  op.opciones_crud_user(3,id_entry.get(),nombre_entry.get(),pass_entry.get(),rol_entry.get()), 
+                bg="#ff9800", fg="white", font=("Arial", 10), width=15).grid(row=1, column=0, padx=10, pady=10)
+
+        tk.Button(botones_frame, text="Visualizar Usuarios", command=lambda:  op.opciones_crud_user(2,id_entry.get(),nombre_entry.get(),pass_entry.get(),rol_entry.get()), 
+                bg="#2196f3", fg="white", font=("Arial", 10), width=15).grid(row=1, column=3, padx=10, pady=10)
+
+
